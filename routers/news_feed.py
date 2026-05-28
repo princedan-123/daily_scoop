@@ -1,5 +1,6 @@
 """Router that contains routes for users news feed."""
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Depends
+from dependencies.utilities import http_client, redis
 import os, asyncio
 from Exceptions.custom_exceptions import FreeNewsAPIError, CurrentNewsError
 
@@ -7,21 +8,22 @@ news_feed = APIRouter(prefix="/news_feed", tags=['news_feed'])
 free_news_base_url='https://api.freenewsapi.io/v1'
 current_news_base_url='https://api.currentsapi.services/v1/latest-news'
 
-@news_feed.get('/anonymous')
-async def anonymous_feed(request:Request ):
+@news_feed.get('/news_feed')
+async def feed(
+    httpx_client = Depends(http_client), redis = Depends(redis)
+    ):
     """News feed for anonymous users."""
-
     feed:[dict] = []
     async def fetch_from_free_news():
         """Fetches news from free news API."""
-        free_news = await request.app.state.client.get(
+        free_news = await httpx_client.get(
             f'{free_news_base_url}/news', headers={'x-api-key':os.getenv('FreeNewsAPIKey')}
             )
         return free_news
 
     async def fetch_from_current_news():
         """Fetches news from current news API."""
-        current_news = await request.app.state.client.get(
+        current_news = await httpx_client.get(
             f"{current_news_base_url}?apiKey={os.getenv('CurrentNewsAPIKey')}"
             )
         return current_news
@@ -31,7 +33,6 @@ async def anonymous_feed(request:Request ):
         fetch_from_current_news(), 
         return_exceptions=True
         )
-    print(current_news)  
     if isinstance(free_news, Exception):
         raise FreeNewsAPIError('failed to access free news API')
     if isinstance(current_news, Exception):
@@ -49,7 +50,7 @@ async def anonymous_feed(request:Request ):
     current_news_data = current_news.json()
     for news in current_news_data['news']:
         article = {}
-        article['news_article'] = news.get('id')
+        article['id'] = news.get('id')
         article['title'] = news.get('title')
         article['url'] = news.get('url')
         article['image'] = news.get('image')
@@ -64,7 +65,7 @@ async def anonymous_feed(request:Request ):
     free_news_data = free_news.json()
     for news in free_news_data['data']:
         article = {}
-        article['news_article'] = news.get('uuid')
+        article['id'] = news.get('uuid')
         article['title'] = news.get('title')
         article['url'] = None
         article['image'] = None
