@@ -81,21 +81,7 @@ async def categories_news(
             ),
         return_exceptions=True
         )
-    if isinstance(free_news, Exception):
-        raise HTTPException(status_code=500, detail=str(free_news)
-        )
-    if isinstance(current_news, Exception):
-        raise HTTPException(status_code=500, detail=str(current_news))
-    if not free_news.is_success:
-        raise FreeNewsAPIError(
-            'An error occured in free_news API acesss',
-            status_code=free_news.status_code
-            )
-    if not current_news.is_success:
-        raise CurrentNewsError(
-            'An error occured in current_news API access',
-            status_code=current_news.status_code
-            )
-    result = normalize(free_news.json(), current_news.json())
-    await redis.set(redis_key, json.dumps(result), ex=15*60)
+    result = normalize(free_news, current_news)
+    if result:
+        await redis.set(redis_key, json.dumps(result), ex=15*60)
     return result

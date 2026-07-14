@@ -9,6 +9,7 @@ def app_error_handler(request:Request, exception:AppError):
         status_code=exception.status_code,
         content={
             'error': 'True',
+            'name': exception.name,
             'message': str(exception)
         }
     )
