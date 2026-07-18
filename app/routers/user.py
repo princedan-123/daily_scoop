@@ -1,9 +1,9 @@
 """Module for user routes."""
 from fastapi import APIRouter, Response, Request, Depends
-from model.signup_model import SignUp
-from errors.custom_exceptions import SignUpError
+from app.model.signup_model import SignUp
+from app.errors.custom_exceptions import SignUpError
 from uuid import uuid4
-from dependencies.utilities import database, redis, authentication
+from app.dependencies.utilities import database, redis, authentication
 import bcrypt
 
 user = APIRouter(prefix='/user', tags=['user_routes'])

@@ -1,9 +1,9 @@
 """A module that contains news of different categories."""
 from fastapi import APIRouter, HTTPException, Depends, Request
-from dependencies.utilities import http_client, current_api_categories
-from dependencies.utilities import free_news_api_categories
-from dependencies.utilities import normalize, redis
-from errors.custom_exceptions import AppError, FreeNewsAPIError, CurrentNewsError
+from app.dependencies.utilities import http_client, current_api_categories
+from app.dependencies.utilities import free_news_api_categories
+from app.dependencies.utilities import normalize, redis
+from app.errors.custom_exceptions import AppError, FreeNewsAPIError, CurrentNewsError
 import httpx, json
 import asyncio
 import os, time

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Request
-from dependencies.utilities import http_client, redis
-from dependencies.utilities import normalize, redis
+from app.dependencies.utilities import http_client, redis
+from app.dependencies.utilities import normalize, redis
 import os, json
 
 free_news_article = APIRouter(tags=['free_news_article_details'])

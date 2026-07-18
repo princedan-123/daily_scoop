@@ -1,11 +1,11 @@
 """Router that contains routes for users news feed."""
 from fastapi import APIRouter, Depends, Request
-from dependencies.utilities import http_client, redis
-from dependencies.utilities import free_news_api_categories
-from dependencies.utilities import current_api_categories
-from dependencies.utilities import normalize
+from app.dependencies.utilities import http_client, redis
+from app.dependencies.utilities import free_news_api_categories
+from app.dependencies.utilities import current_api_categories
+from app.dependencies.utilities import normalize
 import os, asyncio, json
-from errors.custom_exceptions import FreeNewsAPIError, CurrentNewsError
+from app.errors.custom_exceptions import FreeNewsAPIError, CurrentNewsError
 
 news_feed = APIRouter(tags=['news_feed'])
 
