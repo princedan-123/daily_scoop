@@ -5,7 +5,7 @@ from dependencies.utilities import free_news_api_categories
 from dependencies.utilities import current_api_categories
 from dependencies.utilities import normalize
 import os, asyncio, json
-from Exceptions.custom_exceptions import FreeNewsAPIError, CurrentNewsError
+from errors.custom_exceptions import FreeNewsAPIError, CurrentNewsError
 
 news_feed = APIRouter(tags=['news_feed'])
 

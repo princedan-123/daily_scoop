@@ -1,7 +1,7 @@
 """Module for user routes."""
 from fastapi import APIRouter, Response, Request, Depends
 from model.signup_model import SignUp
-from Exceptions.custom_exceptions import SignUpError
+from errors.custom_exceptions import SignUpError
 from uuid import uuid4
 from dependencies.utilities import database, redis, authentication
 import bcrypt
