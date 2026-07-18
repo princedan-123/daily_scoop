@@ -5,7 +5,7 @@ import os, httpx
 
 def database(request:Request):
     """Provides database object to routes."""
-    return request.app.state.db
+    # return request.app.state.db
 
 def http_client(request:Request):
     """Provides httpx client for external network requests."""
@@ -13,7 +13,7 @@ def http_client(request:Request):
 
 def redis(request:Request):
     """Provides redis client."""
-    return request.app.state.redis
+    # return request.app.state.redis
 
 async def authentication(
     request:Request, db = Depends(database), redis_client = Depends(redis)

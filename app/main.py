@@ -23,12 +23,12 @@ async def http_client(app:FastAPI):
     """Httpx client for making http request."""
     async with httpx.AsyncClient( timeout=httpx.Timeout(60.0)) as client:
         app.state.client = client
-        mongo_client = AsyncIOMotorClient()  # Change in production
-        app.state.db = mongo_client['daily_scoop']
-        app.state.redis = redis.Redis(
-            host='localhost',  port=6379,
-            decode_responses=True
-            )
+        # mongo_client = AsyncIOMotorClient()  # Change in production
+        # app.state.db = mongo_client['daily_scoop']
+        # app.state.redis = redis.Redis(
+        #     host='localhost',  port=6379,
+        #     decode_responses=True
+        #     )
         yield
         mongo_client.close()
         await app.state.redis.close()

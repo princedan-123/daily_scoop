@@ -8,14 +8,14 @@ free_news_article = APIRouter(tags=['free_news_article_details'])
 @free_news_article.get('/free_news_article/{article_id}')
 async def news_details(
     article_id:str, http_client = Depends(http_client),
-    redis_client = Depends(redis)
+    # redis_client = Depends(redis)
     ):
     """
     A route that fetches an article news detail from
     free news api.
     """
     #  check cache
-    redis_key = article_id
+    # redis_key = article_id
     if redis_client:
         cached_news = await redis_client.get(redis_key)
         if cached_news:
@@ -30,8 +30,8 @@ async def news_details(
                 }
                 )
         response = response.json()
-        if response and redis_client:
-            await redis_client.set(redis_key, json.dumps(response), ex=60*60)
+        # if response and redis_client:
+        #     await redis_client.set(redis_key, json.dumps(response), ex=60*60)
         return response
 
     except httpx.TimeoutException as time_error:
