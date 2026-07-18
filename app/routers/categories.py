@@ -69,7 +69,7 @@ async def categories_news(
     if not language:
         language = request.app.state.default_language
     redis_key = f'{news_category}:{language}'   # also cache per location f'{news_category}:{lang}:{region}
-    cached_news = await redis.get(redis_key)
+    # cached_news = await redis.get(redis_key)
     
     # if cached_news:
     #     news = json.loads(cached_news)
