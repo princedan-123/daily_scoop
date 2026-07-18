@@ -16,11 +16,11 @@ async def news_details(
     """
     #  check cache
     # redis_key = article_id
-    if redis_client:
-        cached_news = await redis_client.get(redis_key)
-        if cached_news:
-            deserialized_data = json.loads(cached_news)
-            return deserialized_data
+    # if redis_client:
+    #     cached_news = await redis_client.get(redis_key)
+    #     if cached_news:
+    #         deserialized_data = json.loads(cached_news)
+    #         return deserialized_data
     try:
         response = await http_client.get(
             'https://api.freenewsapi.io/v1/details',
