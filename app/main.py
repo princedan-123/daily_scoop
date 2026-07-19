@@ -15,7 +15,9 @@ import os
 origins = [
     "daily-scoop-frontend.vercel.app",
     "https://daily-scoop-frontend.vercel.app/",
-    "https://daily-scoop-frontend.vercel.app"
+    "https://daily-scoop-frontend.vercel.app",
+    "http://127.0.0.1:5173",
+    "http://localhost:5173"
 ]
 load_dotenv()
 @asynccontextmanager

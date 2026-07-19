@@ -13,7 +13,7 @@ def http_client(request:Request):
 
 def redis(request:Request):
     """Provides redis client."""
-    # return request.app.state.redis
+    return request.app.state.redis
 
 async def authentication(
     request:Request, db = Depends(database), redis_client = Depends(redis)
