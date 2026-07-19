@@ -25,12 +25,12 @@ async def http_client(app:FastAPI):
         app.state.client = client
         # mongo_client = AsyncIOMotorClient()  # Change in production
         # app.state.db = mongo_client['daily_scoop']
-        # app.state.redis = redis.Redis(
-        #     host='localhost',  port=6379,
-        #     decode_responses=True
-        #     )
+        app.state.redis = redis.Redis.from_url(
+            os.getenv('REDIS_URL'),
+            decode_responses=True
+            )
         yield
-        mongo_client.close()
+        # mongo_client.close()
         await app.state.redis.close()
 
 

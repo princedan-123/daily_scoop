@@ -62,18 +62,19 @@ async def guardian_latest_news(
 async def categories_news(
     request:Request, news_category:str,
     http_client = Depends(http_client),
-    # redis = Depends(redis)
+    redis = Depends(redis)
     ):
     """Routes for political news."""
     language = request.cookies.get('lang_pref')
     if not language:
         language = request.app.state.default_language
     redis_key = f'{news_category}:{language}'   # also cache per location f'{news_category}:{lang}:{region}
-    # cached_news = await redis.get(redis_key)
+    cached_news = await redis.get(redis_key)
     
-    # if cached_news:
-    #     news = json.loads(cached_news)
-    #     return news
+    if cached_news:
+        news = json.loads(cached_news)
+        print('from cache')
+        return news
     free_news, current_news = await asyncio.gather(
         free_news_api_categories(http_client, language, news_category),
         current_api_categories(
@@ -82,6 +83,7 @@ async def categories_news(
         return_exceptions=True
         )
     result = normalize(free_news, current_news)
-    # if result:
-    #     await redis.set(redis_key, json.dumps(result), ex=15*60)
+    if result:
+        await redis.set(redis_key, json.dumps(result), ex=15*60)
+        print('added to cache')
     return result
