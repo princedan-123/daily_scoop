@@ -1,39 +1,36 @@
-"""Router that contains routes for users news feed."""
+"""A routes that handle curent news api."""
 from fastapi import APIRouter, Depends, Request
 from app.dependencies.utilities import http_client, redis
-from app.dependencies.utilities import free_news_api_categories
 from app.dependencies.utilities import current_api_categories
-from app.dependencies.utilities import normalize
+from app.dependencies.utilities import normalize_current_news
 import os, asyncio, json
 from app.errors.custom_exceptions import FreeNewsAPIError, CurrentNewsError
 
-news_feed = APIRouter(tags=['news_feed'])
+current_news = APIRouter(prefix='/current_news', tags=['curren news api'])
 
-@news_feed.get('/news_feed')
-async def feed(
+@current_news.get('/latest_news')
+async def latest_news(
     request:Request,
     http_client = Depends(http_client),
     redis_client = Depends(redis)
     ):
-    """News feed."""
+    """A route that fetches the latest news from current news api."""
+    
     language = request.cookies.get('lang_pref')
     if not language:
         language = request.app.state.default_language
-    redis_key = f'{news_feed}:{language}'   # also cache per location f'{news_category}:{lang}:{region}
-   
+    redis_key = f'current_api_latest:{language}'   # also cache per location f'{news_category}:{lang}:{region}
+
     if redis_client:
         cached_news = await redis_client.get(redis_key)
         if cached_news:
             news = json.loads(cached_news)
             print('response from cache')
             return news
-    free_news, current_news = await asyncio.gather(
-        free_news_api_categories(http_client, language),
-        current_api_categories(http_client, language),
-        return_exceptions=True
-        )
-    result = normalize(free_news, current_news)
-    if result and redis_client:
+    current_news =   await current_api_categories(http_client, language)
+    result = normalize_current_news(current_news)
+    if current_news and redis_client:
         await redis_client.set(redis_key, json.dumps(result), ex=15*60)
         print('Cached response')
     return result
+    

@@ -2,8 +2,9 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 from app.errors.exception_handlers import register_exceptions
-from app.routers.news_feed import news_feed
+from app.routers.current_news import current_news
 from app.routers.user import user
+from app.routers.free_news import free_news
 from app.routers.free_news_detail import free_news_article
 from app.routers.categories import section
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -41,10 +42,11 @@ app.state.default_language = 'en'
 app.state.guardian_api_key = os.getenv('GuardianNewsKey')
 app.state.current_api_key = os.getenv('CurrentNewsAPIKey')
 app.state.free_news_key = os.getenv('FreeNewsAPIKey')
-app.include_router(news_feed)
+app.include_router(current_news)
 app.include_router(user)
-app.include_router(free_news_article)
+app.include_router(free_news)
 app.include_router(section)
+app.include_router(free_news_article)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,      

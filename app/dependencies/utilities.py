@@ -70,7 +70,7 @@ async def free_news_api_categories(
         print('Before request')
         response = await http_client.get(
             base_url,
-            params = param,
+            params = param if param else None,
             headers={
                 'x-api-key': os.getenv('FreeNewsAPIKey')
                 }
@@ -86,7 +86,7 @@ async def free_news_api_categories(
         print("Other error:", repr(e))
         raise HTTPException(
             status_code=500,
-            detail=error.__class__.__name__
+            detail=e.__class__.__name__
             )
 
 async def current_api_categories(
@@ -121,23 +121,12 @@ async def current_api_categories(
         detail='unable to make API call to current_news_api'
         )
 
-def normalize(free_news_api, current_news_api):
+def normalize_current_news(current_news_api):
     """
-    A utility function that harmonizes the API responses of different api
+    A utility function that reshapes the json response of
+    current news api latest endpoint api
     """
     news_articles = []
-    if not isinstance(free_news_api, Exception):
-        for news in free_news_api.json()['data']:
-            article = {}
-            article['id'] = news.get('uuid')
-            article['title'] = news.get('title')
-            article['url'] = news.get('url')
-            article['image'] = news.get('image')
-            article['published_date'] = news.get('published_at')
-            article['category'] = news.get('category')
-            article['source'] = 'free_news'
-            article['publisher'] = news.get('publisher')
-            news_articles.append(article)
     if not isinstance(current_news_api, Exception):
         for news in current_news_api.json()['news']:
             article = {}
@@ -149,5 +138,26 @@ def normalize(free_news_api, current_news_api):
             article['category'] = news.get('category')
             article['source'] = 'current_news'
             article['publisher'] = None
+            news_articles.append(article)
+    return news_articles
+
+def normalize_free_news(free_news_api):
+    """
+    A utility function that reshapes the json response
+    of free news api.
+    """
+    news_articles = []
+    print(free_news_api)
+    if not isinstance(free_news_api, Exception):
+        for news in free_news_api.json()['data']:
+            article = {}
+            article['id'] = news.get('uuid')
+            article['title'] = news.get('title')
+            article['url'] = news.get('url')
+            article['image'] = news.get('image')
+            article['published_date'] = news.get('published_at')
+            article['category'] = news.get('category')
+            article['source'] = 'free_news'
+            article['publisher'] = news.get('publisher')
             news_articles.append(article)
     return news_articles
