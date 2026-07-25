@@ -76,10 +76,6 @@ async def free_news_api_categories(
                 'x-api-key': os.getenv('FreeNewsAPIKey')
                 }
             )
-        print(os.getenv('FreeNewsAPIKey'))
-        print(response)
-        print('After request') 
-        print(f'response from backend {response.json()}')
         return response
     except httpx.TimeoutException as time_error:
         print("Timeout:", repr(time_error))
@@ -116,7 +112,6 @@ async def current_api_categories(
 
     if category is not None:
         params['category'] = category
-    print(params)
     try:
         response = await http_client.get(
             search_news_url if search_query else latest_news_url,
