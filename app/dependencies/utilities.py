@@ -94,25 +94,32 @@ async def free_news_api_categories(
 async def current_api_categories(
     http_client,
     lang: str | None = None,
-    category: str | None = None
+    category: str | None = None,
+    search_query = None
     ):
     """
     A function that makes an API call to CurrentNews API
     to fetch news by category.
     """
-    base_url = 'https://api.currentsapi.services/v1/latest-news'
+
+    latest_news_url = 'https://api.currentsapi.services/v1/latest-news'
+    search_news_url = 'https://api.currentsapi.services/v1/search'
+    
     params = {
         'apiKey': os.getenv('CurrentNewsAPIKey')
     }
+    if search_query:
+        params['keywords'] = search_query
+
     if lang is not None:
         params['language'] = lang
 
     if category is not None:
         params['category'] = category
-
+    print(params)
     try:
         response = await http_client.get(
-            base_url,
+            search_news_url if search_query else latest_news_url,
             params=params if params else None
             )
         return response
@@ -149,7 +156,6 @@ def normalize_free_news(free_news_api):
     of free news api.
     """
     news_articles = []
-    print(free_news_api)
     if not isinstance(free_news_api, Exception):
         for news in free_news_api.json()['data']:
             article = {}

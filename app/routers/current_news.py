@@ -33,4 +33,22 @@ async def latest_news(
         await redis_client.set(redis_key, json.dumps(result), ex=15*60)
         print('Cached response')
     return result
+
+
+@current_news.get('/search_news')
+async def latest_news(
+    request:Request,
+    http_client = Depends(http_client),
+    search_query: str | int | float = None
+    ):
+    """A route that fetches the latest news from current news api."""
     
+    language = request.cookies.get('lang_pref')
+    if not language:
+        language = request.app.state.default_language
+    
+    current_news =   await current_api_categories(
+        http_client=http_client, lang=language, search_query=search_query
+        )
+    result = normalize_current_news(current_news)
+    return result
