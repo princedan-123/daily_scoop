@@ -51,6 +51,7 @@ async def authentication(
 async def free_news_api_categories(
     http_client,
     lang: str,
+    search_query: str | int | float = None,
     category: str | None = None,
     ):
     """
@@ -65,9 +66,9 @@ async def free_news_api_categories(
         param['topic'] = category
     else:
         param['country'] = default_country
-    print(param)
+    if search_query:
+        param['in_title'] = search_query
     try:
-        print('Before request')
         response = await http_client.get(
             base_url,
             params = param if param else None,
@@ -78,6 +79,7 @@ async def free_news_api_categories(
         print(os.getenv('FreeNewsAPIKey'))
         print(response)
         print('After request') 
+        print(f'response from backend {response.json()}')
         return response
     except httpx.TimeoutException as time_error:
         print("Timeout:", repr(time_error))

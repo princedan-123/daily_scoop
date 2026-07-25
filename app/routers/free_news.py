@@ -12,15 +12,23 @@ free_news = APIRouter(prefix='/free_news', tags=['news_feed'])
 async def free_news_feed(
     request:Request,
     http_client = Depends(http_client),
-    redis_client = Depends(redis)
+    redis_client = Depends(redis),
+    in_title: str | int | float = None
     ):
     """A route that fetches the latest news from free news api"""
+    
     language = request.cookies.get('lang_pref')
     if not language:
         language = request.app.state.default_language
+    if in_title:
+        #  Perform search
+        print('performing search...')
+        free_news = await free_news_api_categories(http_client, language, in_title)
+        result = normalize_free_news(free_news)
+        return result    
+
     redis_key = f'free_news_feed:{language}'   # also cache per location f'{news_category}:{lang}:{region}
 
-    print(redis_key)  
     if redis_client:
         cached_news = await redis_client.get(redis_key)
         if cached_news:
@@ -34,3 +42,4 @@ async def free_news_feed(
         await redis_client.set(redis_key, json.dumps(result), ex=15*60)
         print('Cached response')
     return result
+    
